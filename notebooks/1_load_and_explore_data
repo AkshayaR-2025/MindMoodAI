@@ -1,0 +1,868 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "cb2a249f-2b94-4ecf-8fdb-0fe7392b78cf",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>text</th>\n",
+       "      <th>label</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Just got back from seeing @GaryDelaney in Burs...</td>\n",
+       "      <td>joy</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Oh dear an evening of absolute hilarity I don'...</td>\n",
+       "      <td>joy</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Been waiting all week for this game ❤️❤️❤️ #ch...</td>\n",
+       "      <td>joy</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>@gardiner_love : Thank you so much, Gloria! Yo...</td>\n",
+       "      <td>joy</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>I feel so blessed to work with the family that...</td>\n",
+       "      <td>joy</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                                text label\n",
+       "0  Just got back from seeing @GaryDelaney in Burs...   joy\n",
+       "1  Oh dear an evening of absolute hilarity I don'...   joy\n",
+       "2  Been waiting all week for this game ❤️❤️❤️ #ch...   joy\n",
+       "3  @gardiner_love : Thank you so much, Gloria! Yo...   joy\n",
+       "4  I feel so blessed to work with the family that...   joy"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Step 1: Import pandas to work with CSV files\n",
+    "import pandas as pd\n",
+    "\n",
+    "# Step 2: Load your actual file (this is the correct filename!)\n",
+    "df = pd.read_csv('../data/raw/emotion-labels-train.csv')\n",
+    "\n",
+    "# Step 3: Show the first few rows to make sure it worked\n",
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "89b7cce4-27da-4a2c-9d24-16ed07316c7f",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>text</th>\n",
+       "      <th>label</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>just got back from seeing @garydelaney in burs...</td>\n",
+       "      <td>joy</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>oh dear an evening of absolute hilarity i don'...</td>\n",
+       "      <td>joy</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>been waiting all week for this game ❤️❤️❤️ #ch...</td>\n",
+       "      <td>joy</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>@gardiner_love : thank you so much, gloria! yo...</td>\n",
+       "      <td>joy</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>i feel so blessed to work with the family that...</td>\n",
+       "      <td>joy</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                                text label\n",
+       "0  just got back from seeing @garydelaney in burs...   joy\n",
+       "1  oh dear an evening of absolute hilarity i don'...   joy\n",
+       "2  been waiting all week for this game ❤️❤️❤️ #ch...   joy\n",
+       "3  @gardiner_love : thank you so much, gloria! yo...   joy\n",
+       "4  i feel so blessed to work with the family that...   joy"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Convert all journal text to lowercase\n",
+    "df['text'] = df['text'].str.lower()\n",
+    "\n",
+    "# Show the result\n",
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "3aebb128-4c51-49fd-9b80-2f31454a4290",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "just got back from seeing  in burslem. amazing!! face still hurts from laughing so much #hilarious\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Remove usernames that look like @someone\n",
+    "df['text'] = df['text'].str.replace(r'@\\w+', '', regex=True)\n",
+    "\n",
+    "# Let's print the first one again to check\n",
+    "print(df['text'][0])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "acb9cbc1-6222-4548-b6e9-b174e93460d7",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "just got back from seeing  in burslem. amazing!! face still hurts from laughing so much \n"
+     ]
+    }
+   ],
+   "source": [
+    "# Remove hashtags like #happy or #mood\n",
+    "df['text'] = df['text'].str.replace(r'#\\w+', '', regex=True)\n",
+    "\n",
+    "# Print the first text to check if hashtags are gone\n",
+    "print(df['text'][0])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "0407ad29-eb79-4ace-8f6c-5906497b134e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "just got back from seeing  in burslem. amazing!! face still hurts from laughing so much \n"
+     ]
+    }
+   ],
+   "source": [
+    "# Remove links from the text (http or https)\n",
+    "df['text'] = df['text'].str.replace(r'http\\S+|www.\\S+', '', regex=True)\n",
+    "\n",
+    "# Print a sample text to see if links are gone\n",
+    "print(df['text'][0])\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "2e292207-3702-452a-8e0f-c31b835ff567",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "just got back from seeing  in burslem amazing face still hurts from laughing so much \n"
+     ]
+    }
+   ],
+   "source": [
+    "import string\n",
+    "\n",
+    "# Remove all punctuation from the text\n",
+    "df['text'] = df['text'].str.translate(str.maketrans('', '', string.punctuation))\n",
+    "\n",
+    "# Check the result\n",
+    "print(df['text'][0])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "93b47483-522a-482b-8ef6-8634501f8f6f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "just got back from seeing in burslem amazing face still hurts from laughing so much\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Remove extra/multiple spaces\n",
+    "df['text'] = df['text'].str.replace(r'\\s+', ' ', regex=True)\n",
+    "\n",
+    "# Also remove any space at the start or end\n",
+    "df['text'] = df['text'].str.strip()\n",
+    "\n",
+    "# Check the result\n",
+    "print(df['text'][0])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "ae8b6190-8dc8-45fb-852e-4831b02dbfcc",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: nltk in c:\\users\\dell\\anaconda3\\lib\\site-packages (3.9.1)\n",
+      "Requirement already satisfied: click in c:\\users\\dell\\anaconda3\\lib\\site-packages (from nltk) (8.1.8)\n",
+      "Requirement already satisfied: joblib in c:\\users\\dell\\anaconda3\\lib\\site-packages (from nltk) (1.4.2)\n",
+      "Requirement already satisfied: regex>=2021.8.3 in c:\\users\\dell\\anaconda3\\lib\\site-packages (from nltk) (2024.11.6)\n",
+      "Requirement already satisfied: tqdm in c:\\users\\dell\\anaconda3\\lib\\site-packages (from nltk) (4.67.1)\n",
+      "Requirement already satisfied: colorama in c:\\users\\dell\\anaconda3\\lib\\site-packages (from click->nltk) (0.4.6)\n"
+     ]
+    }
+   ],
+   "source": [
+    "!pip install nltk"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "4fff5be1-065e-45df-8871-db0a620d61bf",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "[nltk_data] Downloading package stopwords to\n",
+      "[nltk_data]     C:\\Users\\DELL\\AppData\\Roaming\\nltk_data...\n",
+      "[nltk_data]   Unzipping corpora\\stopwords.zip.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "True"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import nltk\n",
+    "nltk.download('stopwords')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "b9643d9e-8487-455b-bac5-2397b9dbb132",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "got back seeing burslem amazing face still hurts laughing much\n"
+     ]
+    }
+   ],
+   "source": [
+    "from nltk.corpus import stopwords\n",
+    "\n",
+    "# Get the English stopwords (the, is, am, etc.)\n",
+    "stop_words = set(stopwords.words('english'))\n",
+    "\n",
+    "# Function to remove stopwords from one piece of text\n",
+    "def remove_stopwords(text):\n",
+    "    return ' '.join([word for word in text.split() if word not in stop_words])\n",
+    "\n",
+    "# Apply the function to all journal texts\n",
+    "df['text'] = df['text'].apply(remove_stopwords)\n",
+    "\n",
+    "# Show the first cleaned result\n",
+    "print(df['text'][0])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "1cf30707-9b92-4f07-be91-e725653716f8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from nltk.stem import PorterStemmer\n",
+    "\n",
+    "# Create the stemmer\n",
+    "stemmer = PorterStemmer()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "fd6f9abf-98d8-4d71-bf10-fa69ef8cea34",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "got back see burslem amaz face still hurt laugh much\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Function to apply stemming on a sentence\n",
+    "def stem_text(text):\n",
+    "    return ' '.join([stemmer.stem(word) for word in text.split()])\n",
+    "\n",
+    "# Apply the function to your text column\n",
+    "df['text'] = df['text'].apply(stem_text)\n",
+    "\n",
+    "# Check first row\n",
+    "print(df['text'][0])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "id": "780cc7ae-b6a9-4741-8b1c-80d172d4a8f6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.feature_extraction.text import TfidfVectorizer\n",
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn.metrics import classification_report, accuracy_score"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "27906cc4-3796-4d13-9fbc-52f0af40cd9a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Train size: 2890\n",
+      "Test size: 723\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Texts (X) and emotion labels (y)\n",
+    "X = df['text']\n",
+    "y = df['label']  # If your label column is named differently, let me know!\n",
+    "\n",
+    "# Split into training and testing sets (80% train, 20% test)\n",
+    "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n",
+    "\n",
+    "# Check how many samples in each\n",
+    "print(\"Train size:\", len(X_train))\n",
+    "print(\"Test size:\", len(X_test))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "id": "12d6fbda-ab13-49c9-b3a2-fd93f9311fc7",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "TF-IDF shape (Train): (2890, 5303)\n",
+      "TF-IDF shape (Test): (723, 5303)\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Create the TF-IDF vectorizer\n",
+    "vectorizer = TfidfVectorizer()\n",
+    "\n",
+    "# Fit the vectorizer on training data and transform both train and test sets\n",
+    "X_train_tfidf = vectorizer.fit_transform(X_train)\n",
+    "X_test_tfidf = vectorizer.transform(X_test)\n",
+    "\n",
+    "# Show the shape of the new number matrix\n",
+    "print(\"TF-IDF shape (Train):\", X_train_tfidf.shape)\n",
+    "print(\"TF-IDF shape (Test):\", X_test_tfidf.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "6f7babde-0611-41b6-9625-d939510fa9ba",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Accuracy: 0.715076071922545\n",
+      "\n",
+      "Classification Report:\n",
+      "\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "       anger       0.73      0.71      0.72       154\n",
+      "        fear       0.63      0.83      0.72       223\n",
+      "         joy       0.87      0.79      0.83       185\n",
+      "     sadness       0.68      0.47      0.56       161\n",
+      "\n",
+      "    accuracy                           0.72       723\n",
+      "   macro avg       0.73      0.70      0.71       723\n",
+      "weighted avg       0.73      0.72      0.71       723\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Create the model\n",
+    "model = LogisticRegression(max_iter=1000)\n",
+    "\n",
+    "# Train the model on training data\n",
+    "model.fit(X_train_tfidf, y_train)\n",
+    "\n",
+    "# Predict emotions on the test data\n",
+    "y_pred = model.predict(X_test_tfidf)\n",
+    "\n",
+    "# Check how well the model did\n",
+    "print(\"Accuracy:\", accuracy_score(y_test, y_pred))\n",
+    "print(\"\\nClassification Report:\\n\")\n",
+    "print(classification_report(y_test, y_pred))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "0fd8c7ce-3d9f-4046-87f2-be149e867d3c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import joblib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "72017262-99cc-42ff-a4bc-a01d162b12cb",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['saved_model.pkl']"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Save trained model\n",
+    "joblib.dump(model, 'saved_model.pkl')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "15fc3c3d-21f5-4e94-85ac-74b2bf153bd7",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['tfidf_vectorizer.pkl']"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Save the vectorizer\n",
+    "joblib.dump(vectorizer, 'tfidf_vectorizer.pkl')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "3291c46e-fdf8-40b2-9d12-f51e2af731f2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Basic libraries\n",
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "\n",
+    "# Models\n",
+    "from sklearn.naive_bayes import MultinomialNB\n",
+    "from sklearn.svm import LinearSVC\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "\n",
+    "# Evaluation\n",
+    "from sklearn.metrics import classification_report, confusion_matrix, accuracy_score\n",
+    "\n",
+    "# For saving best model\n",
+    "import joblib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "cea8f3ee-08cc-4c2a-b693-864eb1c3935f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def evaluate_model(model, X_train, X_test, y_train, y_test):\n",
+    "    model.fit(X_train, y_train)\n",
+    "    predictions = model.predict(X_test)\n",
+    "    \n",
+    "    acc = accuracy_score(y_test, predictions)\n",
+    "    print(f\"\\nModel: {model._class.name_}\")\n",
+    "    print(f\"Accuracy: {acc:.4f}\")\n",
+    "    print(\"Classification Report:\\n\", classification_report(y_test, predictions))\n",
+    "    print(\"Confusion Matrix:\\n\", confusion_matrix(y_test, predictions))\n",
+    "    \n",
+    "    return acc"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "id": "b560ed60-96be-4219-a456-7b3de8bff9be",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "============================================================\n",
+      "\n",
+      "Model: MultinomialNB\n",
+      "Accuracy: 0.6570\n",
+      "Classification Report:\n",
+      "               precision    recall  f1-score   support\n",
+      "\n",
+      "       anger       0.77      0.64      0.70       154\n",
+      "        fear       0.54      0.89      0.67       223\n",
+      "         joy       0.84      0.65      0.74       185\n",
+      "     sadness       0.70      0.35      0.47       161\n",
+      "\n",
+      "    accuracy                           0.66       723\n",
+      "   macro avg       0.71      0.63      0.64       723\n",
+      "weighted avg       0.70      0.66      0.65       723\n",
+      "\n",
+      "Confusion Matrix:\n",
+      " [[ 99  45   4   6]\n",
+      " [  6 198   6  13]\n",
+      " [  6  53 121   5]\n",
+      " [ 17  74  13  57]]\n",
+      "============================================================\n",
+      "\n",
+      "Model: LinearSVC\n",
+      "Accuracy: 0.7566\n",
+      "Classification Report:\n",
+      "               precision    recall  f1-score   support\n",
+      "\n",
+      "       anger       0.74      0.78      0.76       154\n",
+      "        fear       0.73      0.80      0.76       223\n",
+      "         joy       0.86      0.84      0.85       185\n",
+      "     sadness       0.68      0.58      0.63       161\n",
+      "\n",
+      "    accuracy                           0.76       723\n",
+      "   macro avg       0.75      0.75      0.75       723\n",
+      "weighted avg       0.76      0.76      0.75       723\n",
+      "\n",
+      "Confusion Matrix:\n",
+      " [[120  10   8  16]\n",
+      " [ 19 179   5  20]\n",
+      " [  7  16 155   7]\n",
+      " [ 16  40  12  93]]\n",
+      "============================================================\n",
+      "\n",
+      "Model: RandomForestClassifier\n",
+      "Accuracy: 0.7732\n",
+      "Classification Report:\n",
+      "               precision    recall  f1-score   support\n",
+      "\n",
+      "       anger       0.82      0.77      0.79       154\n",
+      "        fear       0.68      0.86      0.76       223\n",
+      "         joy       0.87      0.88      0.87       185\n",
+      "     sadness       0.78      0.53      0.63       161\n",
+      "\n",
+      "    accuracy                           0.77       723\n",
+      "   macro avg       0.79      0.76      0.77       723\n",
+      "weighted avg       0.78      0.77      0.77       723\n",
+      "\n",
+      "Confusion Matrix:\n",
+      " [[119  23   6   6]\n",
+      " [ 11 192   5  15]\n",
+      " [  5  15 162   3]\n",
+      " [ 11  51  13  86]]\n",
+      "============================================================\n",
+      "\n",
+      "Model: KNeighborsClassifier\n",
+      "Accuracy: 0.4412\n",
+      "Classification Report:\n",
+      "               precision    recall  f1-score   support\n",
+      "\n",
+      "       anger       0.45      0.03      0.06       154\n",
+      "        fear       0.37      0.89      0.52       223\n",
+      "         joy       0.68      0.62      0.65       185\n",
+      "     sadness       0.67      0.01      0.02       161\n",
+      "\n",
+      "    accuracy                           0.44       723\n",
+      "   macro avg       0.54      0.39      0.31       723\n",
+      "weighted avg       0.53      0.44      0.34       723\n",
+      "\n",
+      "Confusion Matrix:\n",
+      " [[  5 133  16   0]\n",
+      " [  3 198  21   1]\n",
+      " [  2  69 114   0]\n",
+      " [  1 142  16   2]]\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.naive_bayes import MultinomialNB\n",
+    "from sklearn.svm import LinearSVC\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "from sklearn.metrics import classification_report, confusion_matrix, accuracy_score\n",
+    "import joblib\n",
+    "\n",
+    "# Step 1: Define function to train and evaluate\n",
+    "def evaluate_model(model, X_train, X_test, y_train, y_test):\n",
+    "    model.fit(X_train, y_train)\n",
+    "    predictions = model.predict(X_test)\n",
+    "\n",
+    "    acc = accuracy_score(y_test, predictions)\n",
+    "    print(f\"\\nModel: {model.__class__.__name__}\")\n",
+    "    print(f\"Accuracy: {acc:.4f}\")\n",
+    "    print(\"Classification Report:\\n\", classification_report(y_test, predictions))\n",
+    "    print(\"Confusion Matrix:\\n\", confusion_matrix(y_test, predictions))\n",
+    "\n",
+    "    return acc\n",
+    "\n",
+    "# Step 2: Define models to test\n",
+    "models = {\n",
+    "    \"Naive Bayes\": MultinomialNB(),\n",
+    "    \"SVM\": LinearSVC(),\n",
+    "    \"Random Forest\": RandomForestClassifier(),\n",
+    "    \"KNN\": KNeighborsClassifier()\n",
+    "}\n",
+    "\n",
+    "# Step 3: Run the models using vectorized data\n",
+    "model_scores = {}\n",
+    "\n",
+    "for name, model in models.items():\n",
+    "    print(\"=\"*60)\n",
+    "    acc = evaluate_model(model, X_train_tfidf, X_test_tfidf, y_train, y_test)\n",
+    "    model_scores[name] = acc"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "id": "0424ec44-f726-41b6-a5a5-069ae0643b51",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['best_model.pkl']"
+      ]
+     },
+     "execution_count": 30,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Save the best model (Random Forest)\n",
+    "best_model = RandomForestClassifier()\n",
+    "best_model.fit(X_train_tfidf, y_train)\n",
+    "\n",
+    "import joblib\n",
+    "joblib.dump(best_model, 'best_model.pkl')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "id": "411a4cf0-e7ce-4d75-a621-59a888affe0a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.feature_extraction.text import TfidfVectorizer\n",
+    "\n",
+    "# Recreate the TF-IDF vectorizer\n",
+    "tfidf_vectorizer = TfidfVectorizer()\n",
+    "\n",
+    "# Transform the text data again\n",
+    "X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)\n",
+    "X_test_tfidf = tfidf_vectorizer.transform(X_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "id": "807cd027-b23f-47ce-a34b-6a0fd5394134",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['vectorizer.pkl']"
+      ]
+     },
+     "execution_count": 36,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import joblib\n",
+    "joblib.dump(tfidf_vectorizer, 'vectorizer.pkl')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e9c71511-3baf-4f1c-be6b-ee0fe65631fd",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fe8fa82c-947d-431a-919f-68c2bfe8f024",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2a2d6847-3a0f-4720-aad5-b088832f93d3",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python [conda env:base] *",
+   "language": "python",
+   "name": "conda-base-py"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
